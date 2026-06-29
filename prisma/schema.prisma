@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    // "CUSTOMER", "PROVIDER", "ADMIN"
+  avatarUrl    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  customerProfile CustomerProfile?
+  providerProfile ProviderProfile?
+  
+  bookingsAsCustomer Booking[] @relation("CustomerBookings")
+  bookingsAsProvider Booking[] @relation("ProviderBookings")
+  
+  reviewsAsCustomer  Review[] @relation("CustomerReviews")
+  reviewsAsProvider  Review[] @relation("ProviderReviews")
+  
+  transactions      WalletTransaction[]
+}
+
+model CustomerProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProviderProfile {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mobileNumber        String
+  bio                 String?
+  experience          Int      // years of experience
+  skills              String   // Comma-separated list of skills / categories
+  bankAccount         String?
+  upiId               String?
+  gstNumber           String?  // Optional
+  isVerified          Boolean  @default(false)
+  verificationStatus  String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  rejectionReason     String?
+  aadhaarUrl          String?  // Aadhaar image mock url
+  selfieUrl           String?  // Selfie image mock url
+  rating              Float    @default(0.0)
+  completedJobs       Int      @default(0)
+  status              String   @default("AVAILABLE") // "AVAILABLE", "BUSY", "OFFLINE"
+  workingDays         String   @default("Mon,Tue,Wed,Thu,Fri,Sat") // Comma-separated
+  workingHoursStart   String   @default("09:00")
+  workingHoursEnd     String   @default("18:00")
+  holidayDates        String   @default("") // Comma-separated dates like "2026-07-04"
+  blockedDates        String   @default("") // Comma-separated blocked dates
+  emergencyAvailable  Boolean  @default(false)
+  isFeatured          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  serviceAreas        ServiceArea[]
+  portfolioItems      PortfolioItem[]
+}
+
+model ServiceArea {
+  id                String          @id @default(uuid())
+  providerProfileId String
+  providerProfile   ProviderProfile @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+  country           String          @default("India")
+  state             String
+  district          String
+  city              String
+  area              String
+  pincode           String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model PortfolioItem {
+  id                String          @id @default(uuid())
+  providerProfileId String
+  providerProfile   ProviderProfile @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+  imageUrl          String
+  title             String?
+  type              String          @default("WORK") // "WORK", "CERTIFICATE", "BEFORE_AFTER"
+  createdAt         DateTime        @default(now())
+}
+
+model ServiceCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  icon        String   // Lucide icon name, e.g. "Zap" for Electrician
+  type        String   // "HOME" or "CREATIVE"
+  isEnabled   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id                    String   @id @default(uuid())
+  customerId            String
+  customer              User     @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  providerId            String
+  provider              User     @relation("ProviderBookings", fields: [providerId], references: [id], onDelete: Cascade)
+  serviceName           String
+  date                  String   // YYYY-MM-DD
+  time                  String   // HH:MM
+  address               String
+  notes                 String?
+  images                String   @default("") // Comma-separated image mock URLs
+  bookingFee            Int      // in ₹, e.g. 49
+  paymentMethod         String   // "UPI", "CARD", "CASH"
+  paymentStatus         String   @default("PAID") // Booking fee is paid upfront online
+  status                String   @default("PENDING") // "PENDING", "ACCEPTED", "ON_THE_WAY", "STARTED", "COMPLETED", "CANCELLED"
+  completionImages      String   @default("") // Comma-separated images uploaded on completion
+  remainingAmount       Int      // remaining cash / online paid direct to provider
+  remainingPaymentStatus String   @default("PENDING") // "PENDING", "PAID"
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  reviews               Review[]
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  customerId  String
+  customer    User     @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)
+  providerId  String
+  provider    User     @relation("ProviderReviews", fields: [providerId], references: [id], onDelete: Cascade)
+  rating      Int      // 1 to 5
+  comment     String
+  photos      String   @default("") // Comma-separated review photos
+  createdAt   DateTime @default(now())
+}
+
+model WalletTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Int      // amount in ₹ (can be negative for withdrawals)
+  type        String   // "EARNING", "COMMISSION", "WITHDRAWAL", "REFUND"
+  status      String   @default("COMPLETED") // "PENDING", "COMPLETED", "FAILED"
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model Banner {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  linkUrl   String?
+  type      String   @default("BANNER") // "BANNER", "OFFER", "ANNOUNCEMENT"
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
