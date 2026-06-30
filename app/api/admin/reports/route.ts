@@ -28,7 +28,8 @@ export async function GET(request: Request) {
 
         const bookingsList = await prisma.booking.findMany();
         const bookingFeeIncome = bookingsList.reduce(
-          (sum: number, b) => sum + Number(b.bookingFee),
+          (sum: number, b: { bookingFee: number | null }) =>
+            sum + Number(b.bookingFee ?? 0),
           0
         );
         const commissionIncome = Math.round(bookingFeeIncome * 0.15); // 15% platform commission
