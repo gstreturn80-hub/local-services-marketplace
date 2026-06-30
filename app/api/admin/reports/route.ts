@@ -25,11 +25,14 @@ export async function GET(request: Request) {
         const pendingVerification = await prisma.providerProfile.count({ where: { verificationStatus: "PENDING" } });
         const totalBookings = await prisma.booking.count();
         const completedBookings = await prisma.booking.count({ where: { status: "COMPLETED" } });
-        
+
         const bookingsList = await prisma.booking.findMany();
-        const bookingFeeIncome = bookingsList.reduce((sum, b) => sum + b.bookingFee, 0);
+        const bookingFeeIncome = bookingsList.reduce(
+          (sum: number, b) => sum + Number(b.bookingFee),
+          0
+        );
         const commissionIncome = Math.round(bookingFeeIncome * 0.15); // 15% platform commission
-        
+
         csvContent = "Metric,Value\r\n";
         csvContent += `Total Customers,${totalCustomers}\r\n`;
         csvContent += `Total Providers,${totalProviders}\r\n`;
@@ -40,7 +43,7 @@ export async function GET(request: Request) {
         csvContent += `Booking Fee Income (INR),${bookingFeeIncome}\r\n`;
         csvContent += `Commission Income (INR),${commissionIncome}\r\n`;
         csvContent += `Total Platform Revenue (INR),${bookingFeeIncome + commissionIncome}\r\n`;
-        
+
         filename = "marketplace_summary.csv";
       } else if (type === "bookings") {
         const bookings = await prisma.booking.findMany({
@@ -55,7 +58,7 @@ export async function GET(request: Request) {
         bookings.forEach(b => {
           csvContent += `"${b.id}","${b.customer.name}","${b.customer.email}","${b.provider.name}","${b.provider.email}","${b.serviceName}","${b.date}","${b.time}","${b.address.replace(/"/g, '""')}",${b.bookingFee},${b.remainingAmount},"${b.status}"\r\n`;
         });
-        
+
         filename = "bookings_report.csv";
       } else if (type === "providers") {
         const providers = await prisma.providerProfile.findMany({
@@ -67,7 +70,7 @@ export async function GET(request: Request) {
           const areaCodes = p.serviceAreas.map(sa => sa.pincode).join("; ");
           csvContent += `"${p.id}","${p.user.name}","${p.user.email}","${p.mobileNumber}",${p.experience},"${p.skills.replace(/"/g, '""')}",${p.rating},${p.completedJobs},"${p.verificationStatus}","${areaCodes}"\r\n`;
         });
-        
+
         filename = "providers_report.csv";
       }
 
@@ -86,7 +89,7 @@ export async function GET(request: Request) {
     const pendingVerification = await prisma.providerProfile.count({ where: { verificationStatus: "PENDING" } });
     const totalBookings = await prisma.booking.count();
     const completedBookings = await prisma.booking.count({ where: { status: "COMPLETED" } });
-    
+
     const bookingsList = await prisma.booking.findMany();
     const bookingFeeIncome = bookingsList.reduce((sum, b) => sum + b.bookingFee, 0);
     const commissionIncome = Math.round(bookingFeeIncome * 0.15); // 15% platform commission
