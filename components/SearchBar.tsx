@@ -11,6 +11,15 @@ interface AreaOption {
   state: string;
 }
 
+interface CategoryOption {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string;
+  type: string;
+  isEnabled: boolean;
+}
+
 export default function SearchBar() {
   const router = useRouter();
   
@@ -19,12 +28,12 @@ export default function SearchBar() {
   const [location, setLocation] = useState("");
   
   // Autocomplete lists
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [areas, setAreas] = useState<AreaOption[]>([]);
   const [loading, setLoading] = useState(false);
   
   // Suggestions states
-  const [serviceSuggestions, setServiceSuggestions] = useState<any[]>([]);
+  const [serviceSuggestions, setServiceSuggestions] = useState<CategoryOption[]>([]);
   const [locationSuggestions, setLocationSuggestions] = useState<AreaOption[]>([]);
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -62,7 +71,7 @@ export default function SearchBar() {
       setServiceSuggestions([]);
       return;
     }
-    const filtered = categories.filter(c => 
+    const filtered = categories.filter((c: CategoryOption) => 
       c.name.toLowerCase().includes(service.toLowerCase()) ||
       (c.description && c.description.toLowerCase().includes(service.toLowerCase()))
     );
@@ -76,7 +85,7 @@ export default function SearchBar() {
       return;
     }
     const query = location.toLowerCase();
-    const filtered = areas.filter(a => 
+    const filtered = areas.filter((a: AreaOption) => 
       a.city.toLowerCase().includes(query) ||
       a.area.toLowerCase().includes(query) ||
       a.pincode.includes(query)
@@ -101,7 +110,7 @@ export default function SearchBar() {
         params.push(`pincode=${location.trim()}`);
       } else {
         // Check if matches an existing area/city option
-        const matched = areas.find(a => 
+        const matched = areas.find((a: AreaOption) => 
           a.area.toLowerCase() === location.toLowerCase() ||
           a.city.toLowerCase() === location.toLowerCase()
         );
@@ -149,7 +158,7 @@ export default function SearchBar() {
         {/* Location Dropdown */}
         {showLocationDropdown && locationSuggestions.length > 0 && (
           <div className="absolute top-full left-0 mt-3 w-full rounded-xl border border-border bg-card p-1.5 shadow-xl animate-in fade-in duration-100 z-50">
-            {locationSuggestions.slice(0, 5).map((opt, i) => (
+            {locationSuggestions.slice(0, 5).map((opt: AreaOption, i: number) => (
               <button
                 key={i}
                 type="button"
@@ -190,7 +199,7 @@ export default function SearchBar() {
         {/* Service Dropdown */}
         {showServiceDropdown && serviceSuggestions.length > 0 && (
           <div className="absolute top-full left-0 mt-3 w-full rounded-xl border border-border bg-card p-1.5 shadow-xl animate-in fade-in duration-100 z-50">
-            {serviceSuggestions.slice(0, 5).map((opt, i) => (
+            {serviceSuggestions.slice(0, 5).map((opt: CategoryOption, i: number) => (
               <button
                 key={i}
                 type="button"

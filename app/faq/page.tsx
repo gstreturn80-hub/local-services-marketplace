@@ -57,7 +57,7 @@ export default function FAQPage() {
           </div>
 
           <div className="space-y-4">
-            {faqs.map((faq, idx) => {
+            {faqs.map((faq: { q: string; a: string; }, idx: number) => {
               const isOpen = openIndex === idx;
               return (
                 <div 

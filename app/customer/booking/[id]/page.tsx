@@ -279,7 +279,7 @@ export default function BookingDetailPage() {
                       <div className="space-y-1">
                         <label className="block text-3xs font-semibold uppercase text-muted-foreground">Select Rating Stars</label>
                         <div className="flex gap-1.5">
-                          {[1, 2, 3, 4, 5].map((star) => (
+                          {[1, 2, 3, 4, 5].map((star: number) => (
                             <button
                               key={star}
                               type="button"

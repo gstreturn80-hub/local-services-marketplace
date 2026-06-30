@@ -155,7 +155,7 @@ export default function Home() {
         {/* PROMOTION BANNER CAROUSEL (MOCK) */}
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {banners.map((banner) => (
+            {banners.map((banner: any) => (
               <div 
                 key={banner.id}
                 className="relative overflow-hidden rounded-2xl aspect-[21/9] border border-border hover:shadow-lg transition-all group cursor-pointer"
@@ -198,7 +198,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {categories.filter(c => c.type === "HOME").slice(0, 5).map((cat) => {
+              {categories.filter((c: any) => c.type === "HOME").slice(0, 5).map((cat: any) => {
                 const IconComponent = iconMap[cat.icon] || Zap;
                 return (
                   <Link 
@@ -229,7 +229,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {categories.filter(c => c.type === "CREATIVE").slice(0, 6).map((cat) => {
+              {categories.filter((c: any) => c.type === "CREATIVE").slice(0, 6).map((cat: any) => {
                 const IconComponent = iconMap[cat.icon] || Palette;
                 return (
                   <Link 
@@ -267,7 +267,7 @@ export default function Home() {
                 { step: "04", title: "Pay Fee", desc: "Pay a small platform booking fee (₹29-₹99) online securely." },
                 { step: "05", title: "Job Completed", desc: "The verified professional completes the task at your location." },
                 { step: "06", title: "Rate & Review", desc: "Pay the remaining amount directly to the pro and leave a rating." },
-              ].map((s, idx) => (
+              ].map((s: { step: string; title: string; desc: string; }, idx: number) => (
                 <div key={idx} className="flex flex-col items-start bg-background border border-border rounded-xl p-5 relative shadow-sm hover:border-primary transition-colors">
                   <span className="text-2xl font-black text-primary/20 leading-none">{s.step}</span>
                   <h3 className="text-xs font-bold mt-2 text-foreground">{s.title}</h3>
@@ -287,7 +287,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredPros.length > 0 ? (
-              featuredPros.map((pro) => (
+              featuredPros.map((pro: any) => (
                 <div 
                   key={pro.id}
                   className="flex flex-col bg-card border border-border rounded-2xl p-6 shadow-md hover-lift gap-4 relative overflow-hidden"
@@ -368,7 +368,7 @@ export default function Home() {
                 { title: "Verified Professionals", desc: "We authenticate Government Aadhaar cards and selfie portraits for all professionals. Only approved profiles can accept work." },
                 { title: "Transparent Pricing", desc: "Pay a minimal platform booking fee (₹29 to ₹99) online, then pay remaining labor fees directly to the provider. No hidden charges." },
                 { title: "Area-Based Routing", desc: "Our advanced matching engine searches providers based on pincodes, guaranteeing that only near, available pros accept your request." },
-              ].map((item, idx) => (
+              ].map((item: { title: string; desc: string; }, idx: number) => (
                 <div key={idx} className="flex gap-4 p-6 bg-card border border-border rounded-2xl shadow-sm">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <CheckCircle className="h-6 w-6" />

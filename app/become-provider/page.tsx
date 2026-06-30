@@ -68,8 +68,8 @@ export default function BecomeProviderPage() {
 
   useEffect(() => {
     fetch("/api/categories")
-      .then(res => res.json())
-      .then(data => setCategories(data));
+      .then((res: Response) => res.json())
+      .then((data: any[]) => setCategories(data));
   }, []);
 
   const addServiceArea = () => {
@@ -83,12 +83,12 @@ export default function BecomeProviderPage() {
   };
 
   const removeServiceArea = (idx: number) => {
-    setServiceAreas(serviceAreas.filter((_, i) => i !== idx));
+    setServiceAreas(serviceAreas.filter((_: any, i: number) => i !== idx));
   };
 
   const toggleSkill = (skillName: string) => {
     if (skills.includes(skillName)) {
-      setSkills(skills.filter(s => s !== skillName));
+      setSkills(skills.filter((s: string) => s !== skillName));
     } else {
       setSkills([...skills, skillName]);
     }
@@ -258,7 +258,7 @@ export default function BecomeProviderPage() {
                   <div className="space-y-2">
                     <label className="block text-3xs font-semibold uppercase text-muted-foreground">Select Skill Categories (Choose one or more)</label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                      {categories.map((cat) => {
+                      {categories.map((cat: any) => {
                         const isSelected = skills.includes(cat.name);
                         return (
                           <button
@@ -509,7 +509,7 @@ export default function BecomeProviderPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {serviceAreas.map((sa, idx) => (
+                            {serviceAreas.map((sa: any, idx: number) => (
                               <tr key={idx} className="border-b border-border last:border-0">
                                 <td className="px-4 py-2 font-medium">{sa.city}</td>
                                 <td className="px-4 py-2">{sa.area}</td>

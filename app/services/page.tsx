@@ -45,27 +45,38 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   UserSquare2,
 };
 
+interface ServiceCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string;
+  type: string;
+  isEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function ServicesPage() {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/categories")
-      .then(res => res.json())
-      .then(data => {
+      .then((res: Response) => res.json())
+      .then((data: ServiceCategory[]) => {
         setCategories(data);
         setLoading(false);
       });
   }, []);
 
-  const filteredCategories = categories.filter(c => 
+  const filteredCategories = categories.filter((c: ServiceCategory) => 
     c.name.toLowerCase().includes(search.toLowerCase()) ||
     (c.description && c.description.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const homeServices = filteredCategories.filter(c => c.type === "HOME");
-  const creativeServices = filteredCategories.filter(c => c.type === "CREATIVE");
+  const homeServices = filteredCategories.filter((c: ServiceCategory) => c.type === "HOME");
+  const creativeServices = filteredCategories.filter((c: ServiceCategory) => c.type === "CREATIVE");
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -108,7 +119,7 @@ export default function ServicesPage() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {homeServices.map((cat) => {
+                    {homeServices.map((cat: ServiceCategory) => {
                       const IconComponent = iconMap[cat.icon] || Zap;
                       return (
                         <div 
@@ -146,7 +157,7 @@ export default function ServicesPage() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {creativeServices.map((cat) => {
+                    {creativeServices.map((cat: ServiceCategory) => {
                       const IconComponent = iconMap[cat.icon] || Palette;
                       return (
                         <div 

@@ -310,13 +310,13 @@ export default function ProviderDashboard() {
   const isRejectedDoc = p?.verificationStatus === "REJECTED";
 
   // Categorize jobs
-  const pendingJobs = bookings.filter(b => b.status === "PENDING");
+  const pendingJobs = bookings.filter((b: any) => b.status === "PENDING");
   
-  const todayJobs = bookings.filter(b => 
+  const todayJobs = bookings.filter((b: any) => 
     b.status === "ACCEPTED" || b.status === "ON_THE_WAY" || b.status === "STARTED"
   );
 
-  const completedJobsList = bookings.filter(b => 
+  const completedJobsList = bookings.filter((b: any) => 
     b.status === "COMPLETED" || b.status === "CANCELLED"
   );
 
@@ -401,7 +401,7 @@ export default function ProviderDashboard() {
                 <h2 className="text-base font-bold text-foreground">New Service Requests ({pendingJobs.length})</h2>
                 {pendingJobs.length > 0 ? (
                   <div className="space-y-4">
-                    {pendingJobs.map((b) => (
+                    {pendingJobs.map((b: any) => (
                       <div key={b.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:border-primary/50 transition-all">
                         <div className="flex justify-between items-start border-b border-border pb-3">
                           <div>
@@ -453,7 +453,7 @@ export default function ProviderDashboard() {
                 <h2 className="text-base font-bold text-foreground">Today's Dispatch Schedule ({todayJobs.length})</h2>
                 {todayJobs.length > 0 ? (
                   <div className="space-y-4">
-                    {todayJobs.map((b) => (
+                    {todayJobs.map((b: any) => (
                       <div key={b.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4">
                         <div className="flex justify-between items-start border-b border-border pb-3">
                           <div>
@@ -596,7 +596,7 @@ export default function ProviderDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {completedJobsList.map((b) => (
+                        {completedJobsList.map((b: any) => (
                           <tr key={b.id} className="border-b border-border last:border-0 hover:bg-secondary/20 transition-colors">
                             <td className="px-4 py-3 font-semibold text-muted-foreground">#{b.id.slice(0, 8)}</td>
                             <td className="px-4 py-3 font-bold text-foreground">{b.customer.name}</td>

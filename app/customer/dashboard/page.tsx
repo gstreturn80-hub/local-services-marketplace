@@ -81,11 +81,11 @@ export default function CustomerDashboard() {
     );
   }
 
-  const activeBookings = bookings.filter(b => 
+  const activeBookings = bookings.filter((b: any) => 
     b.status === "PENDING" || b.status === "ACCEPTED" || b.status === "ON_THE_WAY" || b.status === "STARTED"
   );
   
-  const completedBookings = bookings.filter(b => 
+  const completedBookings = bookings.filter((b: any) => 
     b.status === "COMPLETED" || b.status === "CANCELLED"
   );
 
@@ -133,7 +133,7 @@ export default function CustomerDashboard() {
                   </div>
                 ) : activeBookings.length > 0 ? (
                   <div className="space-y-4">
-                    {activeBookings.map((b) => (
+                    {activeBookings.map((b: any) => (
                       <div 
                         key={b.id}
                         className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:border-primary/50 transition-all"
@@ -202,7 +202,7 @@ export default function CustomerDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {completedBookings.map((b) => (
+                        {completedBookings.map((b: any) => (
                           <tr key={b.id} className="border-b border-border last:border-0 hover:bg-secondary/20 transition-colors">
                             <td className="px-4 py-3 font-semibold text-muted-foreground">#{b.id.slice(0, 8)}</td>
                             <td className="px-4 py-3 font-bold text-foreground">{b.provider.name}</td>
@@ -247,7 +247,7 @@ export default function CustomerDashboard() {
                   Notifications Center
                 </h3>
                 <div className="space-y-3.5">
-                  {notifications.map((n) => (
+                  {notifications.map((n: any) => (
                     <div key={n.id} className="border-b border-border pb-3 last:border-0 last:pb-0 space-y-1">
                       <p className="text-3xs text-foreground font-semibold leading-relaxed">{n.text}</p>
                       <span className="text-4xs text-muted-foreground block">{n.date}</span>
@@ -263,7 +263,7 @@ export default function CustomerDashboard() {
                   Saved Professionals
                 </h3>
                 <div className="space-y-3">
-                  {savedPros.map((pro) => (
+                  {savedPros.map((pro: any) => (
                     <div key={pro.id} className="flex items-center justify-between gap-3 border-b border-border pb-2 last:border-0 last:pb-0">
                       <div className="flex items-center gap-2">
                         <img src={pro.avatar} alt={pro.name} className="h-9 w-9 rounded-full object-cover" />

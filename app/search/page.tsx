@@ -26,6 +26,25 @@ import {
   Briefcase
 } from "lucide-react";
 
+interface SearchCategory {
+  id: string;
+  name: string;
+}
+
+interface SearchProvider {
+  id: string;
+  isVerified: boolean;
+  rating: number;
+  completedJobs: number;
+  skills: string;
+  bio: string | null;
+  experience: number;
+  user: {
+    name: string;
+    avatarUrl: string | null;
+  };
+}
+
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -40,8 +59,8 @@ function SearchContent() {
   const idParam = searchParams.get("id") || "";
 
   // Lists & data states
-  const [providers, setProviders] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [providers, setProviders] = useState<SearchProvider[]>([]);
+  const [categories, setCategories] = useState<SearchCategory[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -581,7 +600,7 @@ function SearchContent() {
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
                   <option value="">All Categories</option>
-                  {categories.map((cat) => (
+                  {categories.map((cat: SearchCategory) => (
                     <option key={cat.id} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
@@ -668,7 +687,7 @@ function SearchContent() {
                 </div>
               ) : providers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {providers.map((pro) => (
+                  {providers.map((pro: SearchProvider) => (
                     <div 
                       key={pro.id}
                       className="bg-card border border-border rounded-2xl p-5 shadow-sm hover-lift flex flex-col gap-4 relative overflow-hidden"
@@ -747,7 +766,7 @@ function SearchContent() {
                       <p>
                         💡 Try searching for nearby pincodes in the city:{" "}
                         <span className="flex gap-2 mt-1">
-                          {nearbyPincodes.map((pin) => (
+                          {nearbyPincodes.map((pin: string) => (
                             <button
                               key={pin}
                               onClick={() => handleApplyPincodeSuggestion(pin)}

@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { b } from "framer-motion/client";
+import type { Booking, ProviderProfile, ServiceArea, User } from "@prisma/client";
+
+type BookingWithParties = Booking & {
+  customer: { name: string; email: string };
+  provider: { name: string; email: string };
+};
+
+type ProviderWithUserAndAreas = ProviderProfile & {
+  user: User;
+  serviceAreas: ServiceArea[];
+};
 
 // GET: Fetch dashboard reports & export CSV statistics
 export async function GET(request: Request) {
@@ -29,8 +39,8 @@ export async function GET(request: Request) {
 
         const bookingsList = await prisma.booking.findMany();
         const bookingFeeIncome = bookingsList.reduce(
-          (sum: number, b: { bookingFee: number | null }) =>
-            sum + Number(b.bookingFee ?? 0),
+          (sum: number, b: Booking) =>
+            sum + b.bookingFee,
           0
         );
         const commissionIncome = Math.round(bookingFeeIncome * 0.15); // 15% platform commission
@@ -57,7 +67,7 @@ export async function GET(request: Request) {
         });
 
         csvContent = "Booking ID,Customer Name,Customer Email,Provider Name,Provider Email,Service,Date,Time,Address,Booking Fee (INR),Remaining Amount (INR),Status\r\n";
-        bookings.forEach(b => {
+        bookings.forEach((b: BookingWithParties) => {
           csvContent += `"${b.id}","${b.customer.name}","${b.customer.email}","${b.provider.name}","${b.provider.email}","${b.serviceName}","${b.date}","${b.time}","${b.address.replace(/"/g, '""')}",${b.bookingFee},${b.remainingAmount},"${b.status}"\r\n`;
         });
 
@@ -68,8 +78,8 @@ export async function GET(request: Request) {
         });
 
         csvContent = "Provider ID,Name,Email,Mobile,Experience (Years),Skills,Rating,Completed Jobs,Verification Status,Areas Covered\r\n";
-        providers.forEach(p => {
-          const areaCodes = p.serviceAreas.map(sa => sa.pincode).join("; ");
+        providers.forEach((p: ProviderWithUserAndAreas) => {
+          const areaCodes = p.serviceAreas.map((sa: ServiceArea) => sa.pincode).join("; ");
           csvContent += `"${p.id}","${p.user.name}","${p.user.email}","${p.mobileNumber}",${p.experience},"${p.skills.replace(/"/g, '""')}",${p.rating},${p.completedJobs},"${p.verificationStatus}","${areaCodes}"\r\n`;
         });
 
@@ -93,7 +103,7 @@ export async function GET(request: Request) {
     const completedBookings = await prisma.booking.count({ where: { status: "COMPLETED" } });
 
     const bookingsList = await prisma.booking.findMany();
-    const bookingFeeIncome = bookingsList.reduce((sum, b) => sum + b.bookingFee, 0);
+    const bookingFeeIncome = bookingsList.reduce((sum: number, b: Booking) => sum + b.bookingFee, 0);
     const commissionIncome = Math.round(bookingFeeIncome * 0.15); // 15% platform commission
     const activeUsers = await prisma.user.count();
 

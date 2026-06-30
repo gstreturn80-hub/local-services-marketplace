@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import type { WalletTransaction } from "@prisma/client";
 
 // GET: Fetch user's wallet transactions and total balance
 export async function GET() {
@@ -16,8 +17,8 @@ export async function GET() {
     });
 
     const balance = transactions
-      .filter(t => t.status === "COMPLETED")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t: WalletTransaction) => t.status === "COMPLETED")
+      .reduce((sum: number, t: WalletTransaction) => sum + t.amount, 0);
 
     return NextResponse.json({
       balance,
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
       where: { userId: session.userId, status: "COMPLETED" }
     });
 
-    const currentBalance = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const currentBalance = transactions.reduce((sum: number, t: WalletTransaction) => sum + t.amount, 0);
 
     if (currentBalance < withdrawVal) {
       return NextResponse.json({ error: "Insufficient balance for withdrawal" }, { status: 400 });

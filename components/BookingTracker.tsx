@@ -36,7 +36,7 @@ export default function BookingTracker({ status }: BookingTrackerProps) {
   }
 
   // Get index of the current status
-  const currentIdx = steps.findIndex(s => s.key === status);
+  const currentIdx = steps.findIndex((s: { key: string }) => s.key === status);
 
   return (
     <div className="w-full bg-card border border-border rounded-2xl p-6 shadow-md">
@@ -47,7 +47,7 @@ export default function BookingTracker({ status }: BookingTrackerProps) {
         {/* Horizontal Line for Desktop */}
         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -translate-y-1/2 hidden md:block z-0" />
 
-        {steps.map((step, idx) => {
+        {steps.map((step: { key: string; label: string; icon: React.ComponentType<any>; desc: string; }, idx: number) => {
           const StepIcon = step.icon;
           const isCompleted = idx < currentIdx;
           const isCurrent = idx === currentIdx;

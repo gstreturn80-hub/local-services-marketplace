@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import type { ProviderProfile, ServiceArea, PortfolioItem } from "@prisma/client";
+
+type ProviderWithDetails = ProviderProfile & {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    avatarUrl: string | null;
+  };
+  serviceAreas: ServiceArea[];
+  portfolioItems: PortfolioItem[];
+};
 
 // GET: Query/Search service providers with filters
 export async function GET(request: Request) {
@@ -67,36 +79,36 @@ export async function GET(request: Request) {
 
     // Apply filtering in memory
     if (category) {
-      providers = providers.filter(p => 
-        p.skills.toLowerCase().split(",").map(s => s.trim()).includes(category.toLowerCase())
+      providers = providers.filter((p: ProviderWithDetails) => 
+        p.skills.toLowerCase().split(",").map((s: string) => s.trim()).includes(category.toLowerCase())
       );
     }
 
     if (pincode) {
-      providers = providers.filter(p => 
-        p.serviceAreas.some(sa => sa.pincode === pincode)
+      providers = providers.filter((p: ProviderWithDetails) => 
+        p.serviceAreas.some((sa: ServiceArea) => sa.pincode === pincode)
       );
     }
 
     if (city) {
-      providers = providers.filter(p => 
-        p.serviceAreas.some(sa => sa.city.toLowerCase().trim() === city.toLowerCase().trim())
+      providers = providers.filter((p: ProviderWithDetails) => 
+        p.serviceAreas.some((sa: ServiceArea) => sa.city.toLowerCase().trim() === city.toLowerCase().trim())
       );
     }
 
     if (area) {
-      providers = providers.filter(p => 
-        p.serviceAreas.some(sa => sa.area.toLowerCase().trim() === area.toLowerCase().trim())
+      providers = providers.filter((p: ProviderWithDetails) => 
+        p.serviceAreas.some((sa: ServiceArea) => sa.area.toLowerCase().trim() === area.toLowerCase().trim())
       );
     }
 
     if (rating) {
       const minRating = parseFloat(rating);
-      providers = providers.filter(p => p.rating >= minRating);
+      providers = providers.filter((p: ProviderWithDetails) => p.rating >= minRating);
     }
 
     if (verified === "true") {
-      providers = providers.filter(p => p.isVerified);
+      providers = providers.filter((p: ProviderWithDetails) => p.isVerified);
     }
 
     // Availability checks
@@ -107,10 +119,10 @@ export async function GET(request: Request) {
     const todayStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
 
     if (availableToday === "true") {
-      providers = providers.filter(p => {
-        const workingDays = p.workingDays.split(",").map(d => d.trim());
-        const holidayDates = p.holidayDates.split(",").map(d => d.trim());
-        const blockedDates = p.blockedDates.split(",").map(d => d.trim());
+      providers = providers.filter((p: ProviderWithDetails) => {
+        const workingDays = p.workingDays.split(",").map((d: string) => d.trim());
+        const holidayDates = p.holidayDates.split(",").map((d: string) => d.trim());
+        const blockedDates = p.blockedDates.split(",").map((d: string) => d.trim());
         
         const matchesDay = workingDays.includes(currentDay);
         const isHoliday = holidayDates.includes(todayStr);
@@ -121,10 +133,10 @@ export async function GET(request: Request) {
     }
 
     if (availableNow === "true") {
-      providers = providers.filter(p => {
-        const workingDays = p.workingDays.split(",").map(d => d.trim());
-        const holidayDates = p.holidayDates.split(",").map(d => d.trim());
-        const blockedDates = p.blockedDates.split(",").map(d => d.trim());
+      providers = providers.filter((p: ProviderWithDetails) => {
+        const workingDays = p.workingDays.split(",").map((d: string) => d.trim());
+        const holidayDates = p.holidayDates.split(",").map((d: string) => d.trim());
+        const blockedDates = p.blockedDates.split(",").map((d: string) => d.trim());
         
         const matchesDay = workingDays.includes(currentDay);
         const isHoliday = holidayDates.includes(todayStr);
@@ -138,7 +150,7 @@ export async function GET(request: Request) {
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      providers = providers.filter(p => 
+      providers = providers.filter((p: ProviderWithDetails) => 
         p.user.name.toLowerCase().includes(q) || 
         (p.bio && p.bio.toLowerCase().includes(q)) ||
         p.skills.toLowerCase().includes(q)

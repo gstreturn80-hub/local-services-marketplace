@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import type { Review } from "@prisma/client";
 
 // POST: Add review and recalculate provider average rating
 export async function POST(request: Request) {
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
         where: { providerId: booking.providerId }
       });
 
-      const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+      const avgRating = allReviews.reduce((sum: number, r: Review) => sum + r.rating, 0) / allReviews.length;
 
       // 3. Update provider average rating
       if (booking.provider.providerProfile) {

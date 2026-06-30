@@ -435,7 +435,7 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {categories.map((cat) => (
+                        {categories.map((cat: any) => (
                           <tr key={cat.id} className="border-b border-border last:border-0 hover:bg-secondary/15 transition-colors">
                             <td className="px-4 py-3 font-semibold text-primary">{cat.icon}</td>
                             <td className="px-4 py-3 font-bold text-foreground">{cat.name}</td>
@@ -484,7 +484,7 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {areas.length > 0 ? (
-                          areas.map((sa) => (
+                          areas.map((sa: any) => (
                             <tr key={sa.id} className="border-b border-border last:border-0">
                               <td className="px-4 py-3 font-semibold text-muted-foreground">{sa.state}</td>
                               <td className="px-4 py-3">{sa.city}</td>
@@ -515,7 +515,7 @@ export default function AdminDashboard() {
 
                   {pendingProviders.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {pendingProviders.map((pro) => (
+                      {pendingProviders.map((pro: any) => (
                         <div key={pro.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4">
                           <div className="flex items-center gap-3">
                             <img src={pro.user.avatarUrl} alt={pro.user.name} className="h-10 w-10 rounded-full object-cover" />
